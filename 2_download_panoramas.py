@@ -94,16 +94,21 @@ async def download_loop(panoids, pmax):
 
 
 if __name__ == "__main__":
+    # Load panoids info - check for indoor file first, then outdoor pattern
+    json_files = glob.glob('indoor_panoids.json') + glob.glob('panoids*.json')
 
-    # Load panoids info
-    if not glob.glob('panoids*.json'):
-        print('No panoids file found')
+    if not json_files:
+        print('No panoids file found (indoor_panoids.json or panoids_*.json)')
         exit()
-    elif len(glob.glob('panoids*.json')) > 1:
-        print('Multiple panoids files found. Please remove files not needed')
+    elif len(json_files) > 1:
+        print(f'Multiple panoids files found: {json_files}')
+        print('Please specify which to use or remove extras')
         exit()
 
-    with open(glob.glob('panoids*.json')[0], 'r') as f:
+    panoids_file = json_files[0]
+    print(f"Using: {panoids_file}")
+
+    with open(panoids_file, 'r') as f:
         panoids = json.load(f)
 
     # Filter out non-standard panoids (CIHM prefix = custom imagery that doesn't work with cbk0 API)
