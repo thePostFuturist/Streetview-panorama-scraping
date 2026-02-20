@@ -269,7 +269,11 @@ def stich_tiles(panoid, tiles, directory, final_directory, point=None):
     for x, y, fname, url in tiles:
 
         fname = directory + "/" + fname
-        tile = Image.open(fname)
+        if not os.path.exists(fname):
+            print(f"Warning: Missing tile {fname}, using blank")
+            tile = Image.new('RGB', (tile_width, tile_height), color=(128, 128, 128))
+        else:
+            tile = Image.open(fname)
 
         panorama.paste(im=tile, box=(x*tile_width, y*tile_height))
 
@@ -289,7 +293,9 @@ def stich_tiles(panoid, tiles, directory, final_directory, point=None):
 
 def delete_tiles(tiles, directory):
     for x, y, fname, url in tiles:
-        os.remove(directory + "/" + fname)
+        filepath = directory + "/" + fname
+        if os.path.exists(filepath):
+            os.remove(filepath)
 
 
 def api_download(panoid, heading, flat_dir, key, width=640, height=640,
