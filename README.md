@@ -1,21 +1,32 @@
 # Streetview-panorama-scraping
 
-This module helps you scrape panoramas from Google's streetview for given area.
+Scrape Google Street View panoramas for a given area.
 
-Scraping is done asynchronously using aiohttp and asyncio packages.
+## Installation
 
-The module is built upon and modifies streetview module - https://github.com/robolyst/streetview
+```bash
+pip install -r requirements.txt
+```
 
-# Usage
+## Usage
 
-1. Install required modules: `pip install -r requirements.txt`
-2. Change center, radius, resolution to your liking in `config.yaml`.
-3. Running `1_get_panoid_info.py` will save data for panoramas and generate a map of panorama locations.
+1. Edit `config.yaml` to set your desired center coordinates, radius, and resolution.
 
-<img width="100%" alt="Drag the layout file to OBS" src="https://i.imgur.com/DzjSq7a.png">
+2. Run the three steps:
 
-3. Running `2_download_panoramas.py` will start downloading panoramas to a `panoramas/` directory
+```bash
+# Step 1: Get panorama IDs (opens map in browser)
+python 1_get_panoid_info.py
 
-<img width="100%" alt="Drag the layout file to OBS" src="https://i.imgur.com/MDsnjX3.jpg">
+# Step 2: Download panorama images
+python 2_download_panoramas.py
 
-4. Running `3_project_panoramas.py` will project the panoramas into cubical projections with front, back, left and right views as separate images in a `cube_pano/` directory.
+# Step 3: Project to cube faces
+python 3_project_panoramas.py
+```
+
+## Output
+
+- `panoramas/` - Raw equirectangular panorama images
+- `cube_pano/` - Projected cube face images (front, back, left, right)
+- `Result.html` - Map showing panorama locations

@@ -12,9 +12,16 @@ import folium
 
 import streetview
 
+# Global variables for panorama limit
+max_panoids = 0
+stop_fetching = False
+
 
 async def get_panoid(lat, lon, session):
     """ Get data about panoids asynchronously """
+    global stop_fetching
+    if stop_fetching:
+        return
     try:
         url = f"https://maps.googleapis.com/maps/api/js/GeoPhotoService.SingleImageSearch?pb=!1m5!1sapiv3!5sUS!11m2!1m1!1b0!2m4!1m2!3d{lat}!4d{lon}!2d50!3m10!2m2!1sen!2sGB!9m1!1e2!11m4!1m3!1e2!2b1!3e2!4m10!1e1!1e2!1e3!1e4!1e8!1e6!5m1!1e2!6m1!1e2&callback=_xdc_._v2mub5"
         async with session.get(url) as resp:
@@ -24,6 +31,8 @@ async def get_panoid(lat, lon, session):
             all_panoids.extend(panoids)
             os.system('cls')
             print(f'Panoid Count: {len(all_panoids)}')
+            if max_panoids > 0 and len(all_panoids) >= max_panoids:
+                stop_fetching = True
     except:
         print('timeout')
         await asyncio.sleep(10)
@@ -69,6 +78,8 @@ if __name__ == "__main__":
         center = config['center']
         radius = config['radius']
         resolution = config['resolution']
+    max_panoids = config.get('max_panoids', 0)
+    stop_fetching = False
 
     top_left = (center[0]-radius/70, center[1]+radius/70)
     bottom_right = (center[0]+radius/70, center[1]-radius/70)
@@ -89,6 +100,13 @@ if __name__ == "__main__":
     test_points = list(itertools.product(range(resolution+1), range(resolution+1)))
     test_points = [(bottom_right[0] + x*lat_diff/resolution, bottom_right[1] + y*lon_diff/resolution) for (x,y) in test_points]
     test_points = [p for p in test_points if distance(p, center) <= radius]
+
+    # Limit test points if max_panoids is set (each point returns ~30-50 panoramas with overlap)
+    if max_panoids > 0:
+        # Use fewer test points to approximate desired panorama count
+        max_points = max(1, max_panoids // 10)  # Rough estimate
+        test_points = test_points[:max_points]
+        print(f'Limited to {len(test_points)} test points for ~{max_panoids} panoramas')
     
     ### Show test points
     # for point in test_points:

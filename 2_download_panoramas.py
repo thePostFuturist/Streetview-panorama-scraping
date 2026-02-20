@@ -92,7 +92,7 @@ if __name__ == "__main__":
     i = 0
     while True:
         i += 1
-        print(f'Running the next batch: {(i-1)*100+1} → {i*100}')
+        print(f'Running the next batch: {(i-1)*100+1} -> {i*100}')
         loop.run_until_complete(download_loop(panoids, 100 * i))
         if 100 * i > len(panoids):
             break

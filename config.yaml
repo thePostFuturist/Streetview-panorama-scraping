@@ -1,11 +1,13 @@
 ## IMAGE DOWNLOAD SETTINGS
 
 # Center of area to search for panoramas
-center: [50.7734, 14.2080]
+center: [-122.43111369633826, 37.80647085022572]
 # Radius in kilometres
-radius: 3
+radius: 0.01
 # How many dummy points are searched, lower makes it faster, but some panoramas will be missed
 resolution: 500
+# Maximum number of panoramas to collect (0 = unlimited)
+max_panoids: 100
 
 ## IMAGE PROJECTION SETTINGS
 
